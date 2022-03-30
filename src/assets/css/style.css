@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+  --cor-fundo-tela: #FFFFFF;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  font-family: 'Lexend Deca', sans-serif;
+  background-color: var(--cor-fundo-tela);
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
