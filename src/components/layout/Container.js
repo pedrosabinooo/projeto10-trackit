@@ -1,67 +1,46 @@
 import styled from "styled-components";
 
 const Container = styled.div`
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #f2f2f2;
+  margin-top: 70px;
+  margin-bottom: 70px;
+  padding-bottom: 32px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 
-  * {
-    width: 303px;
+  main {
+    width: 100%;
+    height:100%;
+    padding: 0 18px;
   }
 
-  img {
-    width: 180px;
-    height: 178px;
-    margin-top: 70px;
-    margin-bottom: 33px;
-  }
-
-  form {
+  .title {
+    width: 100%;
+    margin-top: 28px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    row-gap: 6px;
-  }
-
-  form input {
-    font-family: "Lexend Deca", sans-serif;
-    background: #ffffff;
-    border: 1px solid #d5d5d5;
-    box-sizing: border-box;
-    border-radius: 5px;
-    height: 45px;
-    font-size: 20px;
-    padding-left: 11px;
-  }
-
-  form input::placeholder {
-      color: #DBDBDB;
-  }
-
-  form button {
-    font-family: "Lexend Deca", sans-serif;
-    background: #52b6ff;
-    border-radius: 4.63636px;
-    border: none;
-    height: 45px;
+    justify-content: space-between;
     font-style: normal;
     font-weight: 400;
-    font-size: 21px;
-    line-height: 26px;
-    text-align: center;
-    color: #ffffff;
+    font-size: 23px;
+    line-height: 29px;
+    color: #126ba5;
   }
 
-  form span {
-    font-style: normal;
-    font-weight: 400;
-    font-size: 13.976px;
-    line-height: 17px;
-    text-align: center;
-    text-decoration-line: underline;
-    color: #52b6ff;
-    margin-top: 19px;
+  .title>button {
+width: 40px;
+height: 35px;
+background: #52B6FF;
+border-radius: 4.63636px;
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 34px;
+text-align: center;
+color: #FFFFFF;
+border:none;
   }
 `;
 

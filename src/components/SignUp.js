@@ -1,9 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Logo from "./../assets/img/logo.svg";
-import Container from "./layout/Container";
+import Container from "./layout/ContainerInitial";
 
 function SignUp() {
   const [loginInfo, setLoginInfo] = useState({
@@ -16,21 +16,19 @@ function SignUp() {
 
   function Signup(event) {
     event.preventDefault();
-    useEffect(() => {
-      const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up`;
-      const promise = axios.post(URL, {
-        email: loginInfo.email,
-        password: loginInfo.password,
-        name: loginInfo.name,
-        image: loginInfo.photo,
-      });
-      promise.then(() => navigate("/"));
-      promise.catch((err) => {
-        console.log(err.response.statusText);
-        alert("Can't sign up");
-      });
-      console.log(URL)
-    }, []);
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up`;
+    const promise = axios.post(URL, {
+      email: loginInfo.email,
+      password: loginInfo.password,
+      name: loginInfo.name,
+      image: loginInfo.photo,
+    });
+    promise.then(() => navigate("/"));
+    promise.catch((err) => {
+      console.log(err.response.statusText);
+      alert("Can't sign up");
+    });
+    console.log(URL);
   }
 
   return (
@@ -59,9 +57,7 @@ function SignUp() {
           type="text"
           id="name"
           placeholder="name"
-          onChange={(e) =>
-            setLoginInfo({ ...loginInfo, name: e.target.value })
-          }
+          onChange={(e) => setLoginInfo({ ...loginInfo, name: e.target.value })}
           required
         />
         <input

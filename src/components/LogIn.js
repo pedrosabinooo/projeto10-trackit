@@ -1,11 +1,11 @@
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import UserContext from "./../contexts/UserContext";
 
 import Logo from "./../assets/img/logo.svg";
-import Container from "./layout/Container";
+import Container from "./layout/ContainerInitial";
 
 function LogIn() {
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
@@ -15,29 +15,26 @@ function LogIn() {
 
   function login(event) {
     event.preventDefault();
-    useEffect(() => {
-      const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login`;
-      const promise = axios.post(URL, {
-        email: loginInfo.email,
-        password: loginInfo.password,
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login`;
+    const promise = axios.post(URL, {
+      email: loginInfo.email,
+      password: loginInfo.password,
+    });
+    promise.then(({ data }) => {
+      setUserInfo({
+        id: data.id,
+        name: data.name,
+        image: data.image,
+        email: data.email,
+        password: data.password,
+        token: data.token,
       });
-      promise.then(({ data }) => {
-        setUserInfo({
-          id: data.id,
-          name: data.name,
-          image: data.image,
-          email: data.email,
-          password: data.password,
-          token: data.token,
-        });
-        console.log(data);
-        navigate("/today");
-      });
-      promise.catch((err) => {
-        console.log(err.response.statusText)
-        alert("Can't sign in to your account. Check your email/password.")
-      });
-    }, []);
+      navigate("/habits");
+    });
+    promise.catch((err) => {
+      console.log(err.response.statusText)
+      alert("Can't sign in to your account. Check your email and password.")
+    });
   }
 
   return (

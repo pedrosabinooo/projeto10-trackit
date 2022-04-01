@@ -8,6 +8,10 @@ body {
   height: 100vh;
   font-family: 'Lexend Deca', sans-serif;
   background-color: var(--cor-fundo-tela);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
 body::-webkit-scrollbar {
