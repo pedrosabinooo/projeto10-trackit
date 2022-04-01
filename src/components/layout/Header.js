@@ -7,7 +7,6 @@ import MiniLogo from "./../../assets/img/minilogo.svg";
 
 function Header() {
   const { userInfo } = useContext(UserContext);
-  console.log(userInfo);
   return (
     <Container>
       <div className="header">

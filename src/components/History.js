@@ -14,9 +14,9 @@ function History() {
           <span>History</span>
         </div>
         <HistoryDiv>
-          <spam>
-            Em breve você poderá ver o histórico dos seus hábitos aqui!
-          </spam>
+          <span>
+            Soon you'll be able to check all your old habits!
+          </span>
         </HistoryDiv>
       </main>
       <Menu />

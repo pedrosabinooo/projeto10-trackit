@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useContext, useEffect, useMemo } from "react";
+import { useState, useContext } from "react";
 import styled from "styled-components";
 import Container from "./layout/Container";
 
@@ -11,11 +11,9 @@ import DeleteIcon from "./../assets/img/delete-icon.svg";
 
 function Habits() {
   const { userInfo } = useContext(UserContext);
-  const config = useMemo(
-    () => ({ headers: { Authorization: `Bearer ${userInfo.token}` } }),
-    [userInfo.token]
-  );
+  const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
+  const [renderHabitsOnce, setRenderHabitsOnce] = useState(true);
   const [habitList, setHabitList] = useState([]);
   const [newHabit, setNewHabit] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
@@ -31,17 +29,58 @@ function Habits() {
     { id: 6, name: "S" },
   ];
 
-  useEffect(() => {
+  if(renderHabitsOnce) {
+    renderHabits();
+    setRenderHabitsOnce(false);
+  }
+
+  function renderHabits() {
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits`;
     const promise = axios.get(URL, config);
-    promise.then(({ data }) => {
-      setHabitList(data);
-      console.log(data);
+    promise.then(({ data }) => setHabitList(data));
+    promise.catch((err) => console.log(err.response.statusText));
+  };
+
+  function checkSelectedDay(day) {
+    const alreadySelected = selectedDays.some((id) => id === day);
+    if (!alreadySelected) {
+      setSelectedDays([...selectedDays, day]);
+    } else {
+      const newSelectedDays = selectedDays.filter((id) => id !== day);
+      setSelectedDays(newSelectedDays);
+    }
+    console.log(selectedDays);
+  }
+
+  function saveHabit(newHabit, selectedDays) {
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits`;
+    const promise = axios.post(
+      URL,
+      {
+        name: newHabit,
+        days: selectedDays,
+      },
+      config
+    );
+    promise.then(() => {
+      setNewHabit("");
+      setSelectedDays([]);
+      renderHabits();
     });
     promise.catch((err) => {
-      console.log(err.response.statusText);
+      console.log(err.response.statusText)
+      alert("Your new habit couldn't be created. Please try again in a few minutes.")
     });
-  }, [config]);
+  }
+
+  function deleteHabit(id) {
+    if (window.confirm("Do you realy want to delete this habit?")) {
+      const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
+      const promise = axios.delete(URL, config);
+      promise.then(() => renderHabits());
+      promise.catch((err) => console.log(err.response.statusText));
+    }
+  }
 
   function renderHabit(habit) {
     return (
@@ -76,50 +115,6 @@ function Habits() {
         </Weekday>
       </Habit>
     );
-  }
-
-  function checkSelectedDay(day) {
-    const alreadySelected = selectedDays.some((id) => id === day);
-    if (!alreadySelected) {
-      setSelectedDays([...selectedDays, day]);
-    } else {
-      const newSelectedDays = selectedDays.filter((id) => id !== day);
-      setSelectedDays(newSelectedDays);
-    }
-    console.log(selectedDays);
-  }
-
-  function saveHabit(newHabit, selectedDays) {
-    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits`;
-    const promise = axios.post(
-      URL,
-      {
-        name: newHabit,
-        days: selectedDays,
-      },
-      config
-    );
-    console.log(newHabit);
-    promise.then(({ data }) => {
-      console.log(data);
-      setNewHabit("");
-      setSelectedDays([]);
-    });
-    promise.catch((err) => {
-      console.log(err.response.statusText);
-    });
-  }
-
-  function deleteHabit(id) {
-    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
-    const promise = axios.delete(URL, config);
-    console.log(newHabit);
-    promise.then(() => {
-      console.log("Deleted");
-    });
-    promise.catch((err) => {
-      console.log(err.response.statusText);
-    });
   }
 
   return (
