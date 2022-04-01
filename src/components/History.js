@@ -1,3 +1,5 @@
+import styled from "styled-components";
+
 import Container from "./layout/Container";
 
 import Header from "./layout/Header";
@@ -11,11 +13,24 @@ function History() {
         <div className="title">
           <span>History</span>
         </div>
-        <spam>Em breve você poderá ver o histórico dos seus hábitos aqui!</spam>
+        <HistoryDiv>
+          <spam>
+            Em breve você poderá ver o histórico dos seus hábitos aqui!
+          </spam>
+        </HistoryDiv>
       </main>
       <Menu />
     </Container>
   );
 }
+
+const HistoryDiv = styled.div`
+margin-top: 17px;
+font-style: normal;
+font-weight: 400;
+font-size: 17.976px;
+line-height: 22px;
+color: #666666;
+`;
 
 export default History;
