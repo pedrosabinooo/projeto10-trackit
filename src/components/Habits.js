@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import Container from "./layout/Container";
 
@@ -7,18 +7,19 @@ import UserContext from "./../contexts/UserContext";
 
 import Header from "./layout/Header";
 import Menu from "./layout/Menu";
+import DeleteIcon from "./../assets/img/delete-icon.svg";
 
 function Habits() {
   const { userInfo } = useContext(UserContext);
-  const config = {
-    headers: {
-      Authorization: `Bearer ${userInfo.token}`,
-    },
-  };
+  const config = useMemo(
+    () => ({ headers: { Authorization: `Bearer ${userInfo.token}` } }),
+    [userInfo.token]
+  );
 
+  const [habitList, setHabitList] = useState([]);
   const [newHabit, setNewHabit] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
 
   const weekdays = [
     { id: 0, name: "S" },
@@ -30,9 +31,56 @@ function Habits() {
     { id: 6, name: "S" },
   ];
 
+  useEffect(() => {
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits`;
+    const promise = axios.get(URL, config);
+    promise.then(({ data }) => {
+      setHabitList(data);
+      console.log(data);
+    });
+    promise.catch((err) => {
+      console.log(err.response.statusText);
+    });
+  }, [config]);
+
+  function renderHabit(habit) {
+    return (
+      <Habit key={habit.id}>
+        <div className="habit-header">
+          <span>{habit.name}</span>
+          <button onClick={() => deleteHabit(habit.id)}>
+            <img src={DeleteIcon} alt="Delete habit" />
+          </button>
+        </div>
+        <Weekday>
+          {weekdays.map((day) => (
+            <Day
+              key={day.id}
+              style={
+                selectedDays.some((id) => id === day)
+                  ? {
+                      color: "#FFFFFF",
+                      background: "#CFCFCF",
+                      border: "#CFCFCF",
+                    }
+                  : {
+                      color: "#DBDBDB",
+                      background: "#FFFFFF",
+                      border: "#D4D4D4",
+                    }
+              }
+            >
+              {day.name}
+            </Day>
+          ))}
+        </Weekday>
+      </Habit>
+    );
+  }
+
   function checkSelectedDay(day) {
-    const jaSelecionado = selectedDays.some((id) => id === day);
-    if (!jaSelecionado) {
+    const alreadySelected = selectedDays.some((id) => id === day);
+    if (!alreadySelected) {
       setSelectedDays([...selectedDays, day]);
     } else {
       const newSelectedDays = selectedDays.filter((id) => id !== day);
@@ -51,11 +99,23 @@ function Habits() {
       },
       config
     );
-    console.log(newHabit)
+    console.log(newHabit);
     promise.then(({ data }) => {
       console.log(data);
       setNewHabit("");
       setSelectedDays([]);
+    });
+    promise.catch((err) => {
+      console.log(err.response.statusText);
+    });
+  }
+
+  function deleteHabit(id) {
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
+    const promise = axios.delete(URL, config);
+    console.log(newHabit);
+    promise.then(() => {
+      console.log("Deleted");
     });
     promise.catch((err) => {
       console.log(err.response.statusText);
@@ -111,6 +171,7 @@ function Habits() {
             </button>
           </div>
         </NewHabit>
+        {habitList.map((habit) => renderHabit(habit))}
       </main>
       <Menu />
     </Container>
@@ -191,6 +252,34 @@ const Day = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const Habit = styled.div`
+  width: 100%;
+  height: 87px;
+  margin-top: 10px;
+  padding: 19px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 25px;
+  color: #666666;
+
+  button {
+    border: none;
+    background-color: transparent;
+    margin-top: -20px;
+    margin-right: -10px;
+  }
+
+  .habit-header {
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+  }
 `;
 
 export default Habits;
