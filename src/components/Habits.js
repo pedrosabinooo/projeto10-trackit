@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useContext } from "react";
 import styled from "styled-components";
-import Container from "./layout/Container";
 
 import UserContext from "./../contexts/UserContext";
 
+import Container from "./layout/Container";
 import Header from "./layout/Header";
 import Menu from "./layout/Menu";
 import DeleteIcon from "./../assets/img/delete-icon.svg";
@@ -17,7 +17,7 @@ function Habits() {
   const [habitList, setHabitList] = useState([]);
   const [newHabit, setNewHabit] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
-  // const [visible, setVisible] = useState(false);
+  const [invisible, setInvisible] = useState(true);
 
   const weekdays = [
     { id: 0, name: "S" },
@@ -29,7 +29,7 @@ function Habits() {
     { id: 6, name: "S" },
   ];
 
-  if(renderHabitsOnce) {
+  if (renderHabitsOnce) {
     renderHabits();
     setRenderHabitsOnce(false);
   }
@@ -39,7 +39,7 @@ function Habits() {
     const promise = axios.get(URL, config);
     promise.then(({ data }) => setHabitList(data));
     promise.catch((err) => console.log(err.response.statusText));
-  };
+  }
 
   function checkSelectedDay(day) {
     const alreadySelected = selectedDays.some((id) => id === day);
@@ -68,8 +68,10 @@ function Habits() {
       renderHabits();
     });
     promise.catch((err) => {
-      console.log(err.response.statusText)
-      alert("Your new habit couldn't be created. Please try again in a few minutes.")
+      console.log(err.response.statusText);
+      alert(
+        "Your new habit couldn't be created. Please try again in a few minutes."
+      );
     });
   }
 
@@ -123,14 +125,13 @@ function Habits() {
       <main>
         <div className="title">
           <span>My habits</span>
-          <button>
-            <span>+</span>
-          </button>
+          <button onClick={() => setInvisible(!invisible)}>+</button>
         </div>
-        <NewHabit>
+        <NewHabit visibility={invisible}>
           <input
             type="text"
             placeholder="new habit"
+            value={newHabit}
             onChange={(e) => setNewHabit(e.target.value)}
           />
           <Weekday>
@@ -157,7 +158,15 @@ function Habits() {
             ))}
           </Weekday>
           <div className="buttons">
-            <button className="cancel">Cancel</button>
+            <button
+              className="cancel"
+              onClick={() => {
+                setNewHabit("");
+                setSelectedDays([]);
+              }}
+            >
+              Cancel
+            </button>
             <button
               className="save"
               onClick={() => saveHabit(newHabit, selectedDays)}
@@ -166,7 +175,13 @@ function Habits() {
             </button>
           </div>
         </NewHabit>
-        {habitList.map((habit) => renderHabit(habit))}
+        {habitList.length === 0 ? (
+          <span className="noHabits">
+            You don't have any habits yet. Create your own to TrackIt!
+          </span>
+        ) : (
+          habitList.map((habit) => renderHabit(habit))
+        )}
       </main>
       <Menu />
     </Container>
@@ -174,7 +189,8 @@ function Habits() {
 }
 
 const NewHabit = styled.div`
-  margin-top: 20px;
+  ${(props) => (props.visibility ? "display: none" : "")};
+  margin-bottom: 10px;
   padding: 19px;
   background-color: #ffffff;
   border: none;
@@ -237,12 +253,12 @@ const Weekday = styled.div`
 const Day = styled.div`
   height: 30px;
   width: 30px;
-  color: ${(props) => props.style.color};
+  ${(props) => "color: " + props.style.color};
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
-  background-color: ${(props) => props.style.background};
-  border: 1px solid ${(props) => props.style.border};
+  ${(props) => "background-color: "+props.style.background};
+  ${(props) => "border: 1px solid "+props.style.border};
   border-radius: 5px;
   display: flex;
   justify-content: center;
