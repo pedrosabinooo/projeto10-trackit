@@ -127,7 +127,7 @@ function Habits() {
           <span>My habits</span>
           <button onClick={() => setInvisible(!invisible)}>+</button>
         </div>
-        <NewHabit visibility={invisible}>
+        <NewHabit style={invisible ? {display: "none"} : {}}>
           <input
             type="text"
             placeholder="new habit"
@@ -140,16 +140,8 @@ function Habits() {
                 key={day.id}
                 style={
                   selectedDays.some((id) => id === day)
-                    ? {
-                        color: "#FFFFFF",
-                        background: "#CFCFCF",
-                        border: "#CFCFCF",
-                      }
-                    : {
-                        color: "#DBDBDB",
-                        background: "#FFFFFF",
-                        border: "#D4D4D4",
-                      }
+                    ? {color: "#FFFFFF", background: "#CFCFCF", border: "#CFCFCF"}
+                    : {color: "#DBDBDB", background: "#FFFFFF", border: "#D4D4D4"}
                 }
                 onClick={() => checkSelectedDay(day.id)}
               >
@@ -189,7 +181,6 @@ function Habits() {
 }
 
 const NewHabit = styled.div`
-  ${(props) => (props.visibility ? "display: none" : "")};
   margin-bottom: 10px;
   padding: 19px;
   background-color: #ffffff;
@@ -253,12 +244,9 @@ const Weekday = styled.div`
 const Day = styled.div`
   height: 30px;
   width: 30px;
-  ${(props) => "color: " + props.style.color};
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
-  ${(props) => "background-color: "+props.style.background};
-  ${(props) => "border: 1px solid "+props.style.border};
   border-radius: 5px;
   display: flex;
   justify-content: center;

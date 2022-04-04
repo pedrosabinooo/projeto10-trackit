@@ -16,18 +16,22 @@ function Today() {
 
   const [renderHabitsOnce, setRenderHabitsOnce] = useState(true);
   const [habitList, setHabitList] = useState([]);
+  const [doneHabits, setDoneHabits] = useState([]);
 
   if (renderHabitsOnce) {
     renderHabits();
     setRenderHabitsOnce(false);
+    habitList.forEach((habit) => {
+      if (habit.done) doneHabits.push(habit.id);
+    });
+    setDoneHabits(doneHabits);
   }
 
   function renderHabits() {
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today`;
     const promise = axios.get(URL, config);
     promise.then(({ data }) => {
-      setHabitList(data);
-      console.log(habitList);
+      setHabitList([...data]);
     });
     promise.catch((err) => console.log(err.response.statusText));
   }
@@ -39,18 +43,60 @@ function Today() {
           <h1>{habit.name}</h1>
           <span>
             Current sequence:{" "}
-            <b className="done">{habit.currentSequence} days</b>
+            <b
+                style={
+                 doneHabits.some((id) => id === habit.id)
+                    ? { color: "#8fc549" }
+                    : { color: "#666666" }
+                }
+            >
+              {habit.currentSequence} days
+            </b>
           </span>
           <span>
-            Your record: <b className="done">{habit.highestSequence} days</b>
+            Your record:{" "}
+            <b
+                style={
+                  habit.currentSequence === habit.highestSequence && doneHabits.some((id) => id === habit.id)
+                    ? { color: "#8fc549" }
+                    : { color: "#666666" }
+                }
+            >
+              {habit.highestSequence} days
+            </b>
           </span>
         </div>
-        <button className="done">
-          {habit.done}
+        <button
+            style={
+              doneHabits.some((id) => id === habit.id)
+                ? { background: "#8fc549" }
+                : { background: "#EBEBEB" }
+            }
+          onClick={() => checkHabit(habit) }
+        >
           <img src={Done} alt="Done/Undone" />
         </button>
       </Habit>
     );
+  }
+
+  function checkHabit(habit) {
+    const type = habit.done === true ? "uncheck" : "check";
+    console.log(habit);
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habit.id}/${type}`;
+    const promise = axios.post(URL, null, config);
+    promise.then(() => {
+      if (!doneHabits.includes(habit.id)) {
+        setDoneHabits([...doneHabits, habit.id]);
+        console.log("Habit done!");
+      } else {
+        const newDoneHabits = doneHabits.filter((id) => id !== habit.id);
+        setDoneHabits(newDoneHabits);
+        console.log("Habit undone!");
+      }
+      renderHabits();
+    });
+    promise.catch((err) => console.log(err.response.statusText));
   }
 
   return (
@@ -58,9 +104,17 @@ function Today() {
       <Header />
       <MainContent>
         <div className="title">{dayjs().format("dddd, MMM DD")}</div>
-        <div className="subtitle done">Nenhum hábito concluído ainda</div>
+        {doneHabits.length === 0 && habitList.length !== 0 ? (
+          <span className="subtitle">
+            You don't have any concluded habits yet.
+          </span>
+        ) : (
+          <span className="subtitle">
+            {(100*doneHabits.length/habitList.length).toFixed(0)}% concluded habits today. 
+          </span>
+        )}
         {habitList.length === 0 ? (
-          <span className="noHabits">
+          <span className="subtitle">
             You don't have any habits yet. Create your own to TrackIt!
           </span>
         ) : (
@@ -80,13 +134,12 @@ const MainContent = styled.div`
   font-weight: 400;
   font-size: 18px;
   line-height: 22px;
-  
-  .subtitle{
+
+  .subtitle {
     color: #bababa;
     margin-top: -10px;
     margin-bottom: 20px;
   }
-
 `;
 
 const Habit = styled.div`
@@ -109,8 +162,6 @@ const Habit = styled.div`
     border: none;
     width: 74px;
     height: 69px;
-    background: #EBEBEB;
-    /* background: #8fc549; */
     border-radius: 5px;
     padding: 0;
   }
@@ -126,6 +177,6 @@ const Habit = styled.div`
     font-size: 13px;
     line-height: 16px;
   }
-`;
+  `;
 
 export default Today;
