@@ -18,16 +18,17 @@ function Today() {
   const [habitList, setHabitList] = useState([]);
   const [doneHabits, setDoneHabits] = useState([]);
 
+  habitList.forEach((habit) => {
+    if (habit.done===true && !doneHabits.includes(habit.id)) doneHabits.push(habit.id);
+  });
+  
   if (renderHabitsOnce) {
     renderHabits();
     setRenderHabitsOnce(false);
-    habitList.forEach((habit) => {
-      if (habit.done) doneHabits.push(habit.id);
-    });
-    setDoneHabits(doneHabits);
   }
-
+  console.log(doneHabits)
   function renderHabits() {
+    console.log("renderHabits")
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today`;
     const promise = axios.get(URL, config);
     promise.then(({ data }) => {
@@ -44,11 +45,11 @@ function Today() {
           <span>
             Current sequence:{" "}
             <b
-                style={
-                 doneHabits.some((id) => id === habit.id)
-                    ? { color: "#8fc549" }
-                    : { color: "#666666" }
-                }
+              style={
+                doneHabits.some((id) => id === habit.id)
+                  ? { color: "#8fc549" }
+                  : { color: "#666666" }
+              }
             >
               {habit.currentSequence} days
             </b>
@@ -56,23 +57,24 @@ function Today() {
           <span>
             Your record:{" "}
             <b
-                style={
-                  habit.currentSequence === habit.highestSequence && doneHabits.some((id) => id === habit.id)
-                    ? { color: "#8fc549" }
-                    : { color: "#666666" }
-                }
+              style={
+                habit.currentSequence === habit.highestSequence &&
+                doneHabits.some((id) => id === habit.id)
+                  ? { color: "#8fc549" }
+                  : { color: "#666666" }
+              }
             >
               {habit.highestSequence} days
             </b>
           </span>
         </div>
         <button
-            style={
-              doneHabits.some((id) => id === habit.id)
-                ? { background: "#8fc549" }
-                : { background: "#EBEBEB" }
-            }
-          onClick={() => checkHabit(habit) }
+          style={
+            doneHabits.some((id) => id === habit.id)
+              ? { background: "#8fc549" }
+              : { background: "#EBEBEB" }
+          }
+          onClick={() => checkHabit(habit)}
         >
           <img src={Done} alt="Done/Undone" />
         </button>
@@ -81,18 +83,21 @@ function Today() {
   }
 
   function checkHabit(habit) {
+    console.log("checkHabit")
     const type = habit.done === true ? "uncheck" : "check";
-    console.log(habit);
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habit.id}/${type}`;
     const promise = axios.post(URL, null, config);
     promise.then(() => {
       if (!doneHabits.includes(habit.id)) {
-        setDoneHabits([...doneHabits, habit.id]);
+        doneHabits.push(habit.id)
+        setDoneHabits([...new Set(doneHabits)]);
         console.log("Habit done!");
+        console.log(type)
       } else {
         const newDoneHabits = doneHabits.filter((id) => id !== habit.id);
-        setDoneHabits(newDoneHabits);
+        setDoneHabits([...new Set(newDoneHabits)]);
         console.log("Habit undone!");
+        console.log(type)
       }
       renderHabits();
     });
@@ -109,8 +114,9 @@ function Today() {
             You don't have any concluded habits yet.
           </span>
         ) : (
-          <span className="subtitle">
-            {(100*doneHabits.length/habitList.length).toFixed(0)}% concluded habits today. 
+          <span className="subtitle done">
+            {((100 * doneHabits.length) / habitList.length).toFixed(0)}%
+            concluded habits today.
           </span>
         )}
         {habitList.length === 0 ? (
@@ -125,22 +131,6 @@ function Today() {
     </Container>
   );
 }
-
-const MainContent = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 0 18px;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 22px;
-
-  .subtitle {
-    color: #bababa;
-    margin-top: -10px;
-    margin-bottom: 20px;
-  }
-`;
 
 const Habit = styled.div`
   display: flex;
@@ -177,6 +167,26 @@ const Habit = styled.div`
     font-size: 13px;
     line-height: 16px;
   }
-  `;
+`;
+
+const MainContent = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 0 18px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+
+  .subtitle {
+    color: #bababa;
+    margin-top: -10px;
+    margin-bottom: 20px;
+  }
+
+  .done{
+    color: #8fc549;
+  }
+`;
 
 export default Today;

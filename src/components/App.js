@@ -11,21 +11,13 @@ import History from "./History";
 
 function App() {
   const [userInfo, setUserInfo] = useState({
-    // id: null,
-    // name: "",
-    // image: "",
-    // email: "",
-    // password: "",
-    // token: "",
-    email: "pedro@driven.com.br",
-    id: 2007,
-    image:
-      "https://image.shutterstock.com/image-vector/web-developer-design-vector-illustration-260nw-314602454.jpg",
-    name: "Pedro",
-    password: "123",
-    token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAwNywiaWF0IjoxNjQ4NzYxOTkyfQ.ExxNDDK_SizujD6bzSvsi9GX9w7GuarlJUe76642uuc",
-  });
+     id: null,
+     name: "",
+     image: "",
+     email: "",
+     password: "",
+     token: "",
+});
   // console.log(userInfo);
   return (
     <UserContext.Provider value={{ userInfo, setUserInfo }}>
