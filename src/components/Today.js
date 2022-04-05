@@ -26,9 +26,9 @@ function Today() {
     renderHabits();
     setRenderHabitsOnce(false);
   }
-  console.log(doneHabits)
+  // console.log(doneHabits)
   function renderHabits() {
-    console.log("renderHabits")
+    // console.log("renderHabits")
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today`;
     const promise = axios.get(URL, config);
     promise.then(({ data }) => {
@@ -83,7 +83,7 @@ function Today() {
   }
 
   function checkHabit(habit) {
-    console.log("checkHabit")
+    // console.log("checkHabit")
     const type = habit.done === true ? "uncheck" : "check";
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habit.id}/${type}`;
     const promise = axios.post(URL, null, config);
@@ -91,13 +91,13 @@ function Today() {
       if (!doneHabits.includes(habit.id)) {
         doneHabits.push(habit.id)
         setDoneHabits([...new Set(doneHabits)]);
-        console.log("Habit done!");
-        console.log(type)
+        // console.log("Habit done!");
+        // console.log(type)
       } else {
         const newDoneHabits = doneHabits.filter((id) => id !== habit.id);
         setDoneHabits([...new Set(newDoneHabits)]);
-        console.log("Habit undone!");
-        console.log(type)
+        // console.log("Habit undone!");
+        // console.log(type)
       }
       renderHabits();
     });
